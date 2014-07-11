@@ -73,4 +73,32 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($hourlyPrice, $result);
 	}
+
+	public function testCalculateTwoHours()
+	{
+		$hourlyPrice = $this->priceHolder->getHourly();
+		$dailyPrice = $this->priceHolder->getDaily();
+
+		// If 2 hours are more expensive than dailyPrice - take daily
+		$correctCharge = ($hourlyPrice * 2) > $dailyPrice ? $dailyPrice : ($hourlyPrice *2);
+
+		$now = \Carbon\Carbon::now();
+		$twoHoursLater = \Carbon\Carbon::now()->addHours(2);
+
+		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$now, $twoHoursLater] ]));
+	}
+
+	public function testCalculateThreeHours()
+	{
+		$hourlyPrice = $this->priceHolder->getHourly();
+		$dailyPrice = $this->priceHolder->getDaily();
+
+		// If 2 hours are more expensive than dailyPrice - take daily
+		$correctCharge = ($hourlyPrice * 3) > $dailyPrice ? $dailyPrice : ($hourlyPrice * 3);
+
+		$now = \Carbon\Carbon::now();
+		$threeHoursLater = \Carbon\Carbon::now()->addHours(3);
+
+		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$now, $threeHoursLater] ]));
+	}
 }
