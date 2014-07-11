@@ -1,6 +1,7 @@
 {
     "require": {
-        "illuminate/container": "dev-master"
+        "illuminate/container": "dev-master",
+	    "nesbot/carbon": "dev-master"
     },
     "autoload": {
         "psr-0": {
