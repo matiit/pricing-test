@@ -101,4 +101,21 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$now, $threeHoursLater] ]));
 	}
+
+	public function testDontTakeBefore5AmIntoConsideration()
+	{
+		$start = \Carbon\Carbon::create(2014, 8, 1, 6, 0, 0);
+		$stop = \Carbon\Carbon::create(2014, 8, 4, 4, 0, 0);
+
+		// It is 3 days because it finish before 5AM
+		// 3 days, counting daily is a 15 pounds, less than weekly, so it should be 15.0
+
+		$dailyCharge = $this->priceHolder->getDaily() * 3;
+		$weeklyCharge = $this->priceHolder->getWeekly();
+
+		$correctCharge = $dailyCharge > $weeklyCharge ? $weeklyCharge : $dailyCharge;
+
+		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
+
+	}
 }

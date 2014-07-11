@@ -76,15 +76,22 @@ class PricingCalculator implements PricingCalculatorInterface
 	{
 		$diffInHours = $start->diffInHours($stop);
 
+		print('diffInHours: ' . $diffInHours . PHP_EOL);
 		return $this->priceHolder->getHourly() * $diffInHours;
 	}
 
 	private function calculateDailyCharge(Carbon $start, Carbon $stop)
 	{
-		$diffInDays = $start->diffInDays($stop);
-		if ($diffInDays === 0)
+		$diffInDays = $start->startOfDay()->diffInDays($stop->endOfDay());
+
+		if ($stop->hour < 5)
+			$diffInDays--;
+
+		// Make minimum as one day, so for example 1 day can be cheaper than 22 hours
+		if ($diffInDays <= 0)
 			$diffInDays = 1;
 
+		print("diffInDays: " . $diffInDays . PHP_EOL);
 		return $this->priceHolder->getDaily() * $diffInDays;
 	}
 }
