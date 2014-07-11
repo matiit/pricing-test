@@ -76,12 +76,25 @@ class PricingCalculator implements PricingCalculatorInterface
 	{
 		$diffInHours = $start->diffInHours($stop);
 
-		print('diffInHours: ' . $diffInHours . PHP_EOL);
 		return $this->priceHolder->getHourly() * $diffInHours;
 	}
 
 	private function calculateDailyCharge(Carbon $start, Carbon $stop)
 	{
+		$diffInDays = $this->calculateDiffInDays($start, $stop);
+
+		return $this->priceHolder->getDaily() * $diffInDays;
+	}
+
+	/**
+	 * Calculate diff in days.
+	 * Respect "5AM rule".
+	 *
+	 * @param Carbon $start
+	 * @param Carbon $stop
+	 * @return int
+	 */
+	private function calculateDiffInDays(Carbon $start, Carbon $stop) {
 		$diffInDays = $start->startOfDay()->diffInDays($stop->endOfDay());
 
 		if ($stop->hour < 5)
@@ -91,7 +104,6 @@ class PricingCalculator implements PricingCalculatorInterface
 		if ($diffInDays <= 0)
 			$diffInDays = 1;
 
-		print("diffInDays: " . $diffInDays . PHP_EOL);
-		return $this->priceHolder->getDaily() * $diffInDays;
+		return $diffInDays;
 	}
 }
