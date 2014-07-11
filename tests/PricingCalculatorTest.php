@@ -11,7 +11,15 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
      */
     private $calculator;
 
-    /**
+	/**
+	 * Instance of PriceHolder.
+	 * Will be used to get prices so we can make assertions
+	 *
+	 * @var PAMH\PriceHolder
+	 */
+	private $priceHolder;
+
+	/**
      * Instantiate the PricingCalculator class using the Laravel IoC container.
      *
      * This container will allow for automatic dependency injection based upon
@@ -29,6 +37,7 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
         // Resolve the pricing calculator (and any type hinted dependencies)
         // and set to class attribute.
         $this->calculator = $container->make('PAMH\\PricingCalculator');
+	    $this->priceHolder = $container->make('PAMH\\PriceHolder');
     }
 
     /**
@@ -50,4 +59,15 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
         $result = $this->calculator->calculate([]);
         $this->assertEquals(0, $result);
     }
+
+	public function testCalculateOneHour()
+	{
+		$hourlyPrice = $this->priceHolder->getHourly();
+
+		$now = \Carbon\Carbon::now();
+		$oneHourLater = $now->addHour();
+		$result = $this->calculator->calculate([ $now, $oneHourLater]);
+
+		$this->assertEquals($hourlyPrice, $result);
+	}
 }

@@ -9,6 +9,8 @@ namespace PAMH;
  * Just for simplification
  * For real, prices should probably not be as const
  * It should be in some database or whatever
+ *
+ * I know that it could implement some interface, but for this i think it would be overkill, of course I may be wrong.
  */
 class PriceHolder
 {
