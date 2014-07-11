@@ -7,13 +7,21 @@ class PricingCalculator implements PricingCalculatorInterface
 	/**
 	 * PriceHolder object
 	 *
-	 * @var PriceHolder
+	 * @var PriceHolder $priceHolder
 	 */
 	protected $priceHolder;
+
+	/**
+	 * Array containing partial results
+	 *
+	 * @var array $partialResults
+	 */
+	protected $partialResults;
 
 	public function __construct(PriceHolder $priceHolder)
 	{
 		$this->priceHolder = $priceHolder;
+		$this->partialResults = [0.0];
 	}
 
     /**
@@ -25,6 +33,9 @@ class PricingCalculator implements PricingCalculatorInterface
      */
     public function calculate(array $periods)
     {
-        return 0;
+
+	    $result = array_sum($this->partialResults);
+	    $this->partialResults = [0.0];
+        return (float) $result;
     }
 }
