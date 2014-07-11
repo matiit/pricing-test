@@ -28,7 +28,7 @@ class PriceHolderTest extends PHPUnit_Framework_TestCase
 
 		// Resolve the pricing calculator (and any type hinted dependencies)
 		// and set to class attribute.
-		$this->calculator = $container->make('PAMH\\PriceHolder');
+		$this->priceHolder = $container->make('PAMH\\PriceHolder');
 	}
 
 	/**
