@@ -35,7 +35,7 @@ class PriceHolderTest extends PHPUnit_Framework_TestCase
 	 * Ensure that the PriceHolder can be resolved from the
 	 * Laravel IoC container.
 	 */
-	public function testPricingCalculatorCanBeResolved()
+	public function testPriceHolderCanBeResolved()
 	{
 		$container = new Container;
 		$priceHolder = $container->make('PAMH\\PriceHolder');
