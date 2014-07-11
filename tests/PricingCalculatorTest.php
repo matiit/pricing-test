@@ -60,13 +60,16 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $result);
     }
 
+	/**
+	 * One hour will be always cheaper than daily charge, so it's safe to test one hour as just one hour price
+	 */
 	public function testCalculateOneHour()
 	{
 		$hourlyPrice = $this->priceHolder->getHourly();
 
 		$now = \Carbon\Carbon::now();
-		$oneHourLater = $now->addHour();
-		$result = $this->calculator->calculate([ $now, $oneHourLater]);
+		$oneHourLater = \Carbon\Carbon::now()->addHour();
+		$result = $this->calculator->calculate([ [$now, $oneHourLater] ]);
 
 		$this->assertEquals($hourlyPrice, $result);
 	}

@@ -2,6 +2,8 @@
 
 namespace PAMH;
 
+use Carbon\Carbon;
+
 class PricingCalculator implements PricingCalculatorInterface
 {
 	/**
@@ -33,9 +35,46 @@ class PricingCalculator implements PricingCalculatorInterface
      */
     public function calculate(array $periods)
     {
+	    foreach ($periods as $period) {
+			$this->calculatePeriod($period);
+	    }
+
 
 	    $result = array_sum($this->partialResults);
-	    $this->partialResults = [0.0];
-        return (float) $result;
+	    $this->resetPartialResults();
+	    return (float) $result;
     }
+
+	/**
+	 * Reset partial results, so next calculation isn't affected by previous one.
+	 */
+	private function resetPartialResults()
+	{
+		$this->partialResults = [0.0];
+	}
+
+	/**
+	 * Calculate price for one period.
+ 	 */
+	private function calculatePeriod($period)
+	{
+		if (count($period) !== 2) throw new \BadMethodCallException();
+
+		$start = $period[0];
+		$stop = $period[1];
+
+		// Get hourly charge
+		$hourlyCharge = $this->calculateHourlyCharge($start, $stop);
+		// ...
+
+		// Just for now
+		$this->partialResults[] = $hourlyCharge;
+	}
+
+	private function calculateHourlyCharge(Carbon $start, Carbon $stop)
+	{
+		$diffInHours = $start->diffInHours($stop);
+
+		return $this->priceHolder->getHourly() * $diffInHours;
+	}
 }
