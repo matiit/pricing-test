@@ -24,7 +24,7 @@ class PriceHolder
 	 */
 	public function getHourly()
 	{
-		return $this->hour;
+		return (float) $this->hour;
 	}
 
 	/**
@@ -32,7 +32,7 @@ class PriceHolder
 	 */
 	public function getDaily()
 	{
-		return $this->day;
+		return (float) $this->day;
 	}
 
 	/**
@@ -40,7 +40,7 @@ class PriceHolder
 	 */
 	public function getWeekly()
 	{
-		return $this->week;
+		return (float) $this->week;
 	}
 
 	/**
@@ -48,7 +48,7 @@ class PriceHolder
 	 */
 	public function getMonthly()
 	{
-		return $this->month;
+		return (float) $this->month;
 	}
 
 	/**

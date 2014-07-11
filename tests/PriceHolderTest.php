@@ -42,4 +42,28 @@ class PriceHolderTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue($priceHolder instanceof \PAMH\PriceHolder);
 	}
 
+	public function testCanGetHourlyPrice()
+	{
+		$this->assertInternalType('float', $this->priceHolder->get('hour'));
+		$this->assertInternalType('float', $this->priceHolder->getHourly());
+	}
+
+	public function testCanGetDailyPrice()
+	{
+		$this->assertInternalType('float', $this->priceHolder->get('day'));
+		$this->assertInternalType('float', $this->priceHolder->getDaily());
+	}
+
+	public function testCanGetWeeklyPrice()
+	{
+		$this->assertInternalType('float', $this->priceHolder->get('week'));
+		$this->assertInternalType('float', $this->priceHolder->getWeekly());
+	}
+
+	public function testCanGetMonthlyPrice()
+	{
+		$this->assertInternalType('float', $this->priceHolder->get('month'));
+		$this->assertInternalType('float', $this->priceHolder->getMonthly());
+	}
+
 }
