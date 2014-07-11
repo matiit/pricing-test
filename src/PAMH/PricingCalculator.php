@@ -66,15 +66,18 @@ class PricingCalculator implements PricingCalculatorInterface
 		// Get hourly charge
 		$hourlyCharge = $this->calculateHourlyCharge($start, $stop);
 		$dailyCharge = $this->calculateDailyCharge($start, $stop);
-		// ...
+		$weeklyCharge = $this->calculateWeeklyCharge($start, $stop);
 
-		// Just for now
-		$this->partialResults[] = min($hourlyCharge, $dailyCharge);
+		// Don't count nulls!
+		$this->partialResults[] = min(array_filter([$hourlyCharge, $dailyCharge]));
 	}
 
 	private function calculateHourlyCharge(Carbon $start, Carbon $stop)
 	{
 		$diffInHours = $start->diffInHours($stop);
+
+		if ($diffInHours > 24)
+			return null;
 
 		return $this->priceHolder->getHourly() * $diffInHours;
 	}
@@ -84,6 +87,22 @@ class PricingCalculator implements PricingCalculatorInterface
 		$diffInDays = $this->calculateDiffInDays($start, $stop);
 
 		return $this->priceHolder->getDaily() * $diffInDays;
+	}
+
+
+	/**
+	 * @param Carbon $start
+	 * @param Carbon $stop
+	 *
+	 * @return float
+	 */
+	private function calculateWeeklyCharge(Carbon $start, Carbon $stop)
+	{
+		$diffInDays = $start->startOfDay()->diffInDays($stop->startOfDay());
+
+		$diffInWeeks = ceil($diffInDays / 7);
+
+		return $diffInWeeks * $this->priceHolder->getWeekly();
 	}
 
 	/**
@@ -106,4 +125,7 @@ class PricingCalculator implements PricingCalculatorInterface
 
 		return $diffInDays;
 	}
+
+
+
 }

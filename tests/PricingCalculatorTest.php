@@ -116,6 +116,22 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
 		$correctCharge = $dailyCharge > $weeklyCharge ? $weeklyCharge : $dailyCharge;
 
 		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
+	}
 
+	public function testOnlyWeeklyIsCheaperThanDaily()
+	{
+		// It is 6 days
+		// It would be 6*10 = 60;
+		// Weekly it will be 20;
+
+		$start = \Carbon\Carbon::create(2014, 1, 1, 1, 0, 0);
+		$stop = \Carbon\Carbon::create(2014, 1, 6, 6, 0, 0);
+
+		$dailyCharge = $this->priceHolder->getDaily() * 6;
+		$weeklyCharge = $this->priceHolder->getWeekly();
+
+		$correctCharge = $dailyCharge > $weeklyCharge ? $weeklyCharge : $dailyCharge;
+
+		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
 	}
 }
