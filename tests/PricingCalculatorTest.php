@@ -146,4 +146,18 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
 	}
+
+	public function testMonthlyOverWeeklyAndWeeklyPlusDaily()
+	{
+		$start = \Carbon\Carbon::create(2014, 1, 24, 14, 0, 0);
+		$stop = \Carbon\Carbon::create(2014, 2, 18, 15, 0, 0);
+
+		$monthlyCharge = $this->priceHolder->getMonthly();
+		$weeklyCharge = $this->priceHolder->getWeekly()*4;
+		$weeklyPlusDaily = ($this->priceHolder->getWeekly() * 3 ) + ($this->priceHolder->getDaily() * 5);
+
+		$correctCharge = min($monthlyCharge, $weeklyCharge, $weeklyPlusDaily);
+
+		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
+	}
 }
