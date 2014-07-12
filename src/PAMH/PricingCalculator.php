@@ -89,6 +89,11 @@ class PricingCalculator implements PricingCalculatorInterface
         );
     }
 
+    /**
+     * @param Carbon $start
+     * @param Carbon $stop
+     * @return float|null
+     */
     private function calculateHourlyCharge(Carbon $start, Carbon $stop)
     {
         $diffInHours = $start->diffInHours($stop);
@@ -98,6 +103,11 @@ class PricingCalculator implements PricingCalculatorInterface
         return $this->priceHolder->getHourly() * $diffInHours;
     }
 
+    /**
+     * @param Carbon $start
+     * @param Carbon $stop
+     * @return float
+     */
     private function calculateDailyCharge(Carbon $start, Carbon $stop)
     {
         $diffInDays = $this->calculateDiffInDays($start, $stop);
@@ -141,6 +151,11 @@ class PricingCalculator implements PricingCalculatorInterface
         return $diffInDays;
     }
 
+    /**
+     * @param Carbon $start
+     * @param Carbon $stop
+     * @return int
+     */
     private function calculateMonthlyCharge(Carbon $start, Carbon $stop)
     {
         $diffInMonths = $start->diffInMonths($stop);
@@ -150,6 +165,11 @@ class PricingCalculator implements PricingCalculatorInterface
         return $diffInMonths * $this->priceHolder->getMonthly();
     }
 
+    /**
+     * @param Carbon $start
+     * @param Carbon $stop
+     * @return float
+     */
     private function calculateMonthlyPlusDailyCharge(Carbon $start, Carbon $stop)
     {
         $diffInDays = $this->calculateDiffInDays($start, $stop);
