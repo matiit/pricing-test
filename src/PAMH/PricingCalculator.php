@@ -55,7 +55,10 @@ class PricingCalculator implements PricingCalculatorInterface
 
 	/**
 	 * Calculate price for one period.
- 	 */
+	 *
+	 * @param Carbon[] $period
+	 * @throws \BadMethodCallException
+	 */
 	private function calculatePeriod($period)
 	{
 		if (count($period) !== 2) throw new \BadMethodCallException();
@@ -67,10 +70,12 @@ class PricingCalculator implements PricingCalculatorInterface
 		$hourlyCharge = $this->calculateHourlyCharge($start, $stop);
 		$dailyCharge = $this->calculateDailyCharge($start, $stop);
 		$weeklyCharge = $this->calculateWeeklyCharge($start, $stop);
-
+		$weeklyPlusDailyCharge = $this->calculateMonthlyPlusDailyCharge($start, $stop);
+		$monthlyCharge = $this->calculateMonthlyCharge($start, $stop);
 
 		// Don't count nulls!
-		$this->partialResults[] = min(array_filter([$hourlyCharge, $dailyCharge, $weeklyCharge]));
+		$this->partialResults[] = min(array_filter([$hourlyCharge, $dailyCharge, $weeklyCharge, $weeklyPlusDailyCharge,
+			$monthlyCharge]));
 	}
 
 	private function calculateHourlyCharge(Carbon $start, Carbon $stop)
@@ -99,7 +104,7 @@ class PricingCalculator implements PricingCalculatorInterface
 	 */
 	private function calculateWeeklyCharge(Carbon $start, Carbon $stop)
 	{
-		$diffInDays = $start->startOfDay()->diffInDays($stop->startOfDay());
+		$diffInDays = $start->copy()->startOfDay()->diffInDays($stop->copy()->startOfDay());
 
 		$diffInWeeks = ceil($diffInDays / 7);
 
@@ -114,7 +119,8 @@ class PricingCalculator implements PricingCalculatorInterface
 	 * @param Carbon $stop
 	 * @return int
 	 */
-	private function calculateDiffInDays(Carbon $start, Carbon $stop) {
+	private function calculateDiffInDays(Carbon $start, Carbon $stop)
+	{
 		$diffInDays = $start->startOfDay()->diffInDays($stop->copy()->startOfDay()->addDay());
 
 		if ($stop->hour < 5)
@@ -127,6 +133,24 @@ class PricingCalculator implements PricingCalculatorInterface
 		return $diffInDays;
 	}
 
+	private function calculateMonthlyCharge(Carbon $start, Carbon $stop)
+	{
+		$diffInMonths = $start->diffInMonths($stop);
 
+		if ($diffInMonths == 0)
+			$diffInMonths = 1;
+
+		return $diffInMonths * $this->priceHolder->getMonthly();
+	}
+
+	private function calculateMonthlyPlusDailyCharge(Carbon $start, Carbon $stop)
+	{
+		$diffInDays = $this->calculateDiffInDays($start, $stop);
+
+		$weeks = floor($diffInDays / 7);
+		$restOfDays = $diffInDays % 7;
+
+		return ( $weeks * $this->priceHolder->getWeekly() ) + ( $restOfDays * $this->priceHolder->getDaily() );
+	}
 
 }
