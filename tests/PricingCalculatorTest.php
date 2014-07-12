@@ -134,4 +134,16 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
 
 		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
 	}
+
+	public function testSecondDayBefore5Am()
+	{
+		$start = \Carbon\Carbon::create(2014, 1, 24, 14, 0, 0);
+		$stop = \Carbon\Carbon::create(2014, 1, 25, 12, 0, 0);
+
+		// It's two days (stop after 5am)
+
+		$correctCharge = $this->priceHolder->getDaily() * 2;
+
+		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
+	}
 }
