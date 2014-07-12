@@ -11,15 +11,15 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
      */
     private $calculator;
 
-	/**
-	 * Instance of PriceHolder.
-	 * Will be used to get prices so we can make assertions
-	 *
-	 * @var PAMH\PriceHolder
-	 */
-	private $priceHolder;
+    /**
+     * Instance of PriceHolder.
+     * Will be used to get prices so we can make assertions
+     *
+     * @var PAMH\PriceHolder
+     */
+    private $priceHolder;
 
-	/**
+    /**
      * Instantiate the PricingCalculator class using the Laravel IoC container.
      *
      * This container will allow for automatic dependency injection based upon
@@ -37,7 +37,7 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
         // Resolve the pricing calculator (and any type hinted dependencies)
         // and set to class attribute.
         $this->calculator = $container->make('PAMH\\PricingCalculator');
-	    $this->priceHolder = $container->make('PAMH\\PriceHolder');
+        $this->priceHolder = $container->make('PAMH\\PriceHolder');
     }
 
     /**
@@ -60,104 +60,104 @@ class PricingCalculatorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, $result);
     }
 
-	/**
-	 * One hour will be always cheaper than daily charge, so it's safe to test one hour as just one hour price
-	 */
-	public function testCalculateOneHour()
-	{
-		$hourlyPrice = $this->priceHolder->getHourly();
+    /**
+     * One hour will be always cheaper than daily charge, so it's safe to test one hour as just one hour price
+     */
+    public function testCalculateOneHour()
+    {
+        $hourlyPrice = $this->priceHolder->getHourly();
 
-		$now = \Carbon\Carbon::now();
-		$oneHourLater = \Carbon\Carbon::now()->addHour();
-		$result = $this->calculator->calculate([ [$now, $oneHourLater] ]);
+        $now = \Carbon\Carbon::now();
+        $oneHourLater = \Carbon\Carbon::now()->addHour();
+        $result = $this->calculator->calculate([[$now, $oneHourLater]]);
 
-		$this->assertEquals($hourlyPrice, $result);
-	}
+        $this->assertEquals($hourlyPrice, $result);
+    }
 
-	public function testCalculateTwoHours()
-	{
-		$hourlyPrice = $this->priceHolder->getHourly();
-		$dailyPrice = $this->priceHolder->getDaily();
+    public function testCalculateTwoHours()
+    {
+        $hourlyPrice = $this->priceHolder->getHourly();
+        $dailyPrice = $this->priceHolder->getDaily();
 
-		// If 2 hours are more expensive than dailyPrice - take daily
-		$correctCharge = ($hourlyPrice * 2) > $dailyPrice ? $dailyPrice : ($hourlyPrice *2);
+        // If 2 hours are more expensive than dailyPrice - take daily
+        $correctCharge = ($hourlyPrice * 2) > $dailyPrice ? $dailyPrice : ($hourlyPrice * 2);
 
-		$now = \Carbon\Carbon::now();
-		$twoHoursLater = \Carbon\Carbon::now()->addHours(2);
+        $now = \Carbon\Carbon::now();
+        $twoHoursLater = \Carbon\Carbon::now()->addHours(2);
 
-		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$now, $twoHoursLater] ]));
-	}
+        $this->assertEquals($correctCharge, $this->calculator->calculate([[$now, $twoHoursLater]]));
+    }
 
-	public function testCalculateThreeHours()
-	{
-		$hourlyPrice = $this->priceHolder->getHourly();
-		$dailyPrice = $this->priceHolder->getDaily();
+    public function testCalculateThreeHours()
+    {
+        $hourlyPrice = $this->priceHolder->getHourly();
+        $dailyPrice = $this->priceHolder->getDaily();
 
-		// If 2 hours are more expensive than dailyPrice - take daily
-		$correctCharge = ($hourlyPrice * 3) > $dailyPrice ? $dailyPrice : ($hourlyPrice * 3);
+        // If 2 hours are more expensive than dailyPrice - take daily
+        $correctCharge = ($hourlyPrice * 3) > $dailyPrice ? $dailyPrice : ($hourlyPrice * 3);
 
-		$now = \Carbon\Carbon::now();
-		$threeHoursLater = \Carbon\Carbon::now()->addHours(3);
+        $now = \Carbon\Carbon::now();
+        $threeHoursLater = \Carbon\Carbon::now()->addHours(3);
 
-		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$now, $threeHoursLater] ]));
-	}
+        $this->assertEquals($correctCharge, $this->calculator->calculate([[$now, $threeHoursLater]]));
+    }
 
-	public function testDontTakeBefore5AmIntoConsideration()
-	{
-		$start = \Carbon\Carbon::create(2014, 8, 1, 6, 0, 0);
-		$stop = \Carbon\Carbon::create(2014, 8, 4, 4, 0, 0);
+    public function testDontTakeBefore5AmIntoConsideration()
+    {
+        $start = \Carbon\Carbon::create(2014, 8, 1, 6, 0, 0);
+        $stop = \Carbon\Carbon::create(2014, 8, 4, 4, 0, 0);
 
-		// It is 3 days because it finish before 5AM
-		// 3 days, counting daily is a 15 pounds, less than weekly, so it should be 15.0
+        // It is 3 days because it finish before 5AM
+        // 3 days, counting daily is a 15 pounds, less than weekly, so it should be 15.0
 
-		$dailyCharge = $this->priceHolder->getDaily() * 3;
-		$weeklyCharge = $this->priceHolder->getWeekly();
+        $dailyCharge = $this->priceHolder->getDaily() * 3;
+        $weeklyCharge = $this->priceHolder->getWeekly();
 
-		$correctCharge = $dailyCharge > $weeklyCharge ? $weeklyCharge : $dailyCharge;
+        $correctCharge = $dailyCharge > $weeklyCharge ? $weeklyCharge : $dailyCharge;
 
-		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
-	}
+        $this->assertEquals($correctCharge, $this->calculator->calculate([[$start, $stop]]));
+    }
 
-	public function testOnlyWeeklyIsCheaperThanDaily()
-	{
-		// It is 6 days
-		// It would be 6*10 = 60;
-		// Weekly it will be 20;
+    public function testOnlyWeeklyIsCheaperThanDaily()
+    {
+        // It is 6 days
+        // It would be 6*10 = 60;
+        // Weekly it will be 20;
 
-		$start = \Carbon\Carbon::create(2014, 1, 1, 1, 0, 0);
-		$stop = \Carbon\Carbon::create(2014, 1, 6, 6, 0, 0);
+        $start = \Carbon\Carbon::create(2014, 1, 1, 1, 0, 0);
+        $stop = \Carbon\Carbon::create(2014, 1, 6, 6, 0, 0);
 
-		$dailyCharge = $this->priceHolder->getDaily() * 6;
-		$weeklyCharge = $this->priceHolder->getWeekly();
+        $dailyCharge = $this->priceHolder->getDaily() * 6;
+        $weeklyCharge = $this->priceHolder->getWeekly();
 
-		$correctCharge = $dailyCharge > $weeklyCharge ? $weeklyCharge : $dailyCharge;
+        $correctCharge = $dailyCharge > $weeklyCharge ? $weeklyCharge : $dailyCharge;
 
-		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
-	}
+        $this->assertEquals($correctCharge, $this->calculator->calculate([[$start, $stop]]));
+    }
 
-	public function testSecondDayBefore5Am()
-	{
-		$start = \Carbon\Carbon::create(2014, 1, 24, 14, 0, 0);
-		$stop = \Carbon\Carbon::create(2014, 1, 25, 12, 0, 0);
+    public function testSecondDayBefore5Am()
+    {
+        $start = \Carbon\Carbon::create(2014, 1, 24, 14, 0, 0);
+        $stop = \Carbon\Carbon::create(2014, 1, 25, 12, 0, 0);
 
-		// It's two days (stop after 5am)
+        // It's two days (stop after 5am)
 
-		$correctCharge = $this->priceHolder->getDaily() * 2;
+        $correctCharge = $this->priceHolder->getDaily() * 2;
 
-		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
-	}
+        $this->assertEquals($correctCharge, $this->calculator->calculate([[$start, $stop]]));
+    }
 
-	public function testMonthlyOverWeeklyAndWeeklyPlusDaily()
-	{
-		$start = \Carbon\Carbon::create(2014, 1, 24, 14, 0, 0);
-		$stop = \Carbon\Carbon::create(2014, 2, 18, 15, 0, 0);
+    public function testMonthlyOverWeeklyAndWeeklyPlusDaily()
+    {
+        $start = \Carbon\Carbon::create(2014, 1, 24, 14, 0, 0);
+        $stop = \Carbon\Carbon::create(2014, 2, 18, 15, 0, 0);
 
-		$monthlyCharge = $this->priceHolder->getMonthly();
-		$weeklyCharge = $this->priceHolder->getWeekly()*4;
-		$weeklyPlusDaily = ($this->priceHolder->getWeekly() * 3 ) + ($this->priceHolder->getDaily() * 5);
+        $monthlyCharge = $this->priceHolder->getMonthly();
+        $weeklyCharge = $this->priceHolder->getWeekly() * 4;
+        $weeklyPlusDaily = ($this->priceHolder->getWeekly() * 3) + ($this->priceHolder->getDaily() * 5);
 
-		$correctCharge = min($monthlyCharge, $weeklyCharge, $weeklyPlusDaily);
+        $correctCharge = min($monthlyCharge, $weeklyCharge, $weeklyPlusDaily);
 
-		$this->assertEquals($correctCharge, $this->calculator->calculate([ [$start, $stop] ]));
-	}
+        $this->assertEquals($correctCharge, $this->calculator->calculate([[$start, $stop]]));
+    }
 }
