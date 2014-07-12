@@ -69,7 +69,7 @@ class PricingCalculator implements PricingCalculatorInterface
 		$weeklyCharge = $this->calculateWeeklyCharge($start, $stop);
 
 		// Don't count nulls!
-		$this->partialResults[] = min(array_filter([$hourlyCharge, $dailyCharge]));
+		$this->partialResults[] = min(array_filter([$hourlyCharge, $dailyCharge, $weeklyCharge]));
 	}
 
 	private function calculateHourlyCharge(Carbon $start, Carbon $stop)
