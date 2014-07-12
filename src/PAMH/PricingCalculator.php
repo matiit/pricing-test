@@ -68,6 +68,7 @@ class PricingCalculator implements PricingCalculatorInterface
 		$dailyCharge = $this->calculateDailyCharge($start, $stop);
 		$weeklyCharge = $this->calculateWeeklyCharge($start, $stop);
 
+
 		// Don't count nulls!
 		$this->partialResults[] = min(array_filter([$hourlyCharge, $dailyCharge, $weeklyCharge]));
 	}
@@ -114,7 +115,7 @@ class PricingCalculator implements PricingCalculatorInterface
 	 * @return int
 	 */
 	private function calculateDiffInDays(Carbon $start, Carbon $stop) {
-		$diffInDays = $start->startOfDay()->diffInDays($stop->endOfDay());
+		$diffInDays = $start->startOfDay()->diffInDays($stop->copy()->startOfDay()->addDay());
 
 		if ($stop->hour < 5)
 			$diffInDays--;
