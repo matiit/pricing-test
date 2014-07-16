@@ -72,7 +72,7 @@ class PricingCalculator implements PricingCalculatorInterface
         $hourlyCharge = $this->calculateHourlyCharge($start, $stop);
         $dailyCharge = $this->calculateDailyCharge($start, $stop);
         $weeklyCharge = $this->calculateWeeklyCharge($start, $stop);
-        $weeklyPlusDailyCharge = $this->calculateMonthlyPlusDailyCharge($start, $stop);
+        $weeklyPlusDailyCharge = $this->calculateWeeklyPlusDailyCharge($start, $stop);
         $monthlyCharge = $this->calculateMonthlyCharge($start, $stop);
 
         // Don't count nulls!
@@ -170,7 +170,7 @@ class PricingCalculator implements PricingCalculatorInterface
      * @param Carbon $stop
      * @return float
      */
-    private function calculateMonthlyPlusDailyCharge(Carbon $start, Carbon $stop)
+    private function calculateWeeklyPlusDailyCharge(Carbon $start, Carbon $stop)
     {
         $diffInDays = $this->calculateDiffInDays($start, $stop);
 
